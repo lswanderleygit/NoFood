@@ -1,0 +1,7 @@
+{
+  "name": "nofood.api",
+  "version": "1.0.0",
+  "description": "Api feita em nodeJs para utilização NoFood",
+  "main": "index.js",
+  "license": "MIT"
+}
