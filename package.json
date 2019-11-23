@@ -4,7 +4,7 @@
   "description": "Api feita em nodeJs para utilização NoFood",
   "main": "index.js",
   "scripts": {
-    "dev": ""
+    "dev": "nodemon server.js"
   },
   "license": "MIT",
   "dependencies": {

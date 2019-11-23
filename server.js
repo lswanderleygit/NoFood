@@ -1,11 +1,7 @@
-const express = require("express");
+"use strict";
+const app = require("./src/app");
+const variables = require("./src/config/variables");
 
-const app = express();
-
-app.get("/", (req, res) => {
-  res.status(200).send("Hello World");
-});
-
-app.listen(3000, () => {
-  console.log("Server api NoFood init in the port 3000");
+app.listen(variables.Api.port, () => {
+  console.log(`Api inicialized on port ${variables.Api.port}`);
 });
