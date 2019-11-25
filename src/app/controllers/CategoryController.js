@@ -1,5 +1,4 @@
 "use strict";
-// const mongoose = require("mongoose");
 const category = require("../models/CategoryModel");
 
 class CategoryController {
