@@ -11,9 +11,7 @@ class App {
 
     this.routes();
 
-    mongoose.connect(variables.Database.connection, {
-      useNewUrlParser: true
-    });
+    this.database();
   }
 
   middlewares() {
@@ -24,7 +22,13 @@ class App {
     this.app.use(routes);
   }
 
-  database() {}
+  database() {
+    mongoose.set("useCreateIndex", true);
+    mongoose.connect(variables.Database.connection, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+  }
 }
 
 module.exports = new App().app;

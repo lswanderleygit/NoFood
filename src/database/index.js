@@ -1,13 +1,9 @@
 const mongoose = require("mongoose");
 
-const variables = require("../config/variables");
+const variables = require("../config/svariables");
 
 class Database {
   constructor() {
-    this.init();
-  }
-
-  init() {
     this.connection = mongoose.connect(variables.Database.connection);
   }
 }
