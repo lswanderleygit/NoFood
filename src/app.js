@@ -1,6 +1,7 @@
 const express = require("express");
-
 const routes = require("./routes");
+const mongoose = require("mongoose");
+const variables = require("./config/variables");
 
 class App {
   constructor() {
@@ -9,6 +10,10 @@ class App {
     this.middlewares();
 
     this.routes();
+
+    mongoose.connect(variables.Database.connection, {
+      useNewUrlParser: true
+    });
   }
 
   middlewares() {
@@ -18,6 +23,8 @@ class App {
   routes() {
     this.app.use(routes);
   }
+
+  database() {}
 }
 
 module.exports = new App().app;
