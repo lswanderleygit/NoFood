@@ -1,5 +1,6 @@
 "use strict";
 const productModel = require("../models/ProductModel");
+const Yup = require("yup");
 
 class ProductController {
   // index:get show:get store:post update:put delete:delete
@@ -7,51 +8,77 @@ class ProductController {
   async index(req, res) {
     const listProducts = await productModel.find();
 
+    if (!listProducts) {
+      return res.status(400).json({ message: "Products not found" });
+    }
+
     return res.status(200).send(listProducts);
   }
 
   async show(req, res) {
-    const product = await productModel.findById(req.params.id);
+    const schema = Yup.string().required("Informe um id");
 
-    if (!product) {
-      return res.json({ message: "product not exists" });
+    if (await schema.isValid(req.params.id)) {
+      const productFound = await productModel.findById(req.params.id);
+      return res.status(200).json(productFound);
     }
 
-    res.status(200).json(product);
+    return res.status(400).json({ message: "product not exists" });
   }
 
   async store(req, res) {
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      description: Yup.string(),
+      image: Yup.string(),
+      active: Yup.boolean().required()
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: "Validation fails" });
+    }
+
     const product = await productModel.create(req.body);
 
     res.status(201).json(product);
   }
 
   async update(req, res) {
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      description: Yup.string(),
+      image: Yup.string(),
+      active: Yup.boolean().required()
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: "Validation fails" });
+    }
+
     const checkProduct = await productModel.findById(req.params.id);
 
     if (!checkProduct) {
-      return res.json({ error: "Product not exists" });
+      return res.status(400).json({ error: "Product not exists" });
     }
 
-    await productModel.update(req.params._id, {
+    const product = await productModel.findOneAndUpdate(req.params._id, {
       $set: req.body
     });
-
-    const product = await productModel.findById(req.params.id);
 
     res.status(202).json(product);
   }
 
   async delete(req, res) {
-    const checkProduct = await productModel.findById(req.params.id);
+    const schema = Yup.string().required();
 
-    if (!checkProduct) {
-      return res.json({ error: "product not exists" });
+    if (await schema.isValid(req.params.id)) {
+      const deleted = await productModel.findByIdAndRemove(req.params.id);
+      return res.status(204);
     }
 
-    await productModel.remove({ _id: req.params.id });
+    res.status(400).json({ error: "Report id" });
 
-    res.status(204).json({ message: "deleted" });
+    // await productModel.remove({ _id: req.params.id });
   }
 }
 

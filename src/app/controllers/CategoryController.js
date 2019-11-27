@@ -9,6 +9,10 @@ class CategoryController {
   async index(req, res) {
     const listCategorys = await categorysModel.find();
 
+    if (!listCategorys) {
+      return res.status(400).json({ message: "Users not found" });
+    }
+
     res.status(200).send(listCategorys);
   }
 
@@ -35,11 +39,9 @@ class CategoryController {
       return res.status(400).json({ error: "Validation fails" });
     }
 
-    const model = new categorysModel(req.body);
+    const category = await categorysModel.create(req.body);
 
-    const result = await model.save();
-
-    res.status(201).send(result);
+    res.status(201).send(category);
   }
 
   async update(req, res) {
@@ -54,11 +56,11 @@ class CategoryController {
       return res.status(400).json({ error: "Validation fails" });
     }
 
-    await categorysModel.findByIdAndUpdate(req.params.id, { $set: req.body });
+    const categoryFound = await categorysModel.findOneAndUpdate(req.params.id, {
+      $set: req.body
+    });
 
-    let categoryFound = await categorysModel.findById(req.params.id);
-
-    res.status(202).send(categoryFound);
+    res.status(202).json(categoryFound);
   }
 
   async delete(req, res) {
@@ -69,7 +71,7 @@ class CategoryController {
       res.status(204).send(deleted);
     }
 
-    res.status(400).json({ error: "Informe um id" });
+    res.status(400).json({ error: "Report id" });
   }
 }
 
