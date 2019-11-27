@@ -1,41 +1,77 @@
 "use strict";
-const category = require("../models/CategoryModel");
+const Yup = require("yup");
+
+const categorysModel = require("../models/CategoryModel");
 
 class CategoryController {
   // index:get show:get store:post update:put delete:delete
 
   async index(req, res) {
-    console.log("aqui");
-    const listCategorys = await category.find();
+    const listCategorys = await categorysModel.find();
+
+    if (!listCategorys) {
+      return res.status(400).json({ message: "Users not found" });
+    }
 
     res.status(200).send(listCategorys);
   }
 
   async show(req, res) {
-    const categoryFound = await category.findById(req.params.id);
+    const schema = Yup.string().required("Informe um id");
 
-    res.status(200).send(categoryFound);
+    if (await schema.isValid(req.params.id)) {
+      const categoryFound = await categorysModel.findById(req.params.id);
+      return res.status(200).send(categoryFound);
+    }
+
+    res.status(400).json({ error: "O id precisa ser informado" });
   }
 
   async store(req, res) {
-    const model = new category(req.body);
+    const schema = Yup.object().shape({
+      title: Yup.string().required(),
+      description: Yup.string(),
+      image: Yup.string(),
+      active: Yup.boolean().required()
+    });
 
-    const result = await model.save();
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: "Validation fails" });
+    }
 
-    res.status(201).send(result);
+    const category = await categorysModel.create(req.body);
+
+    res.status(201).send(category);
   }
 
   async update(req, res) {
-    await category.findByIdAndUpdate(req.params.id, { $set: req.body });
+    const schema = Yup.object().shape({
+      title: Yup.string().required(),
+      description: Yup.string(),
+      image: Yup.string(),
+      active: Yup.boolean().required()
+    });
 
-    let categoryFound = await category.findById(req.params.id);
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: "Validation fails" });
+    }
 
-    res.status(202).send(categoryFound);
+    const categoryFound = await categorysModel.findOneAndUpdate(req.params.id, {
+      $set: req.body
+    });
+
+    res.status(202).json(categoryFound);
   }
 
   async delete(req, res) {
-    const deleted = await category.findByIdAndRemove(req.params.id);
-    res.status(204).send(deleted);
+    const schema = Yup.string().required();
+
+    if (await schema.isValid(req.params.id)) {
+      const deleted = await categorysModel.findByIdAndRemove(req.params.id);
+      res.status(204).send(deleted);
+    }
+
+    res.status(400).json({ error: "Report id" });
   }
 }
 
