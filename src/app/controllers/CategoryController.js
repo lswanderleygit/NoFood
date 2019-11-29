@@ -17,14 +17,14 @@ class CategoryController {
   }
 
   async show(req, res) {
-    const schema = Yup.string().required("Informe um id");
+    const schema = Yup.string().required();
 
     if (await schema.isValid(req.params.id)) {
       const categoryFound = await categorysModel.findById(req.params.id);
       return res.status(200).send(categoryFound);
     }
 
-    res.status(400).json({ error: "O id precisa ser informado" });
+    res.status(400).json({ error: "Id is required" });
   }
 
   async store(req, res) {
@@ -67,11 +67,11 @@ class CategoryController {
     const schema = Yup.string().required();
 
     if (await schema.isValid(req.params.id)) {
-      const deleted = await categorysModel.findByIdAndRemove(req.params.id);
-      res.status(204).send(deleted);
+      await categorysModel.findByIdAndRemove(req.params.id);
+      res.status(204);
     }
 
-    res.status(400).json({ error: "Report id" });
+    res.status(400).json({ error: "Required id" });
   }
 }
 
