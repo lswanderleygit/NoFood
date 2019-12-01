@@ -4,6 +4,8 @@ const CategoryController = require("./app/controllers/CategoryController");
 const ProductController = require("./app/controllers/ProductController");
 const UserController = require("./app/controllers/UserController");
 
+const auth = require("./middlewares/auth");
+
 const routes = new Router();
 
 // Rotues category
@@ -21,10 +23,11 @@ routes.put("/api/product/:id", ProductController.update);
 routes.delete("/api/product/:id", ProductController.delete);
 
 // Routes User
-routes.get("/api/user", UserController.index);
-routes.get("/api/user/:id", UserController.show);
+routes.post("/api/user/session", UserController.session);
+routes.get("/api/user", auth, UserController.index);
+routes.get("/api/user/:id", auth, UserController.show);
 routes.post("/api/user", UserController.store);
-routes.put("/api/user/:id", UserController.update);
-routes.delete("/api/user/:id", UserController.delete);
+routes.put("/api/user/:id", auth, UserController.update);
+routes.delete("/api/user/:id", auth, UserController.delete);
 
 module.exports = routes;
