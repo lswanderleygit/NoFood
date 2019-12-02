@@ -8,7 +8,7 @@ const productModel = new schema(
   {
     name: { type: String, required: true, trim: true },
     description: { type: String, required: true },
-    price: { type: Number, required: true },
+    price: { type: Number, required: true, default: 0 },
     image: { type: String, required: true },
     active: { type: Boolean, required: true },
     createdAt: { type: Date, default: Date.now }
